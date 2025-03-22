@@ -77,6 +77,33 @@ Util.buildClassificationGrid = async function (data) {
   }
   return grid;
 };
+/* ****************************************
+ * Build the vehicle detail view HTML
+ **************************************** */
+Util.buildVehicleDetailView = function (vehicle) {
+  if (!vehicle) {
+    return '<p class="notice">Vehicle not found.</p>';
+  }
+
+  return `
+    <div class="vehicle-detail-container">
+        <img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${
+    vehicle.inv_model
+  }">
+        <h2>${vehicle.inv_make} ${vehicle.inv_model}</h2>
+        <p><strong>Price:</strong> ${new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(vehicle.inv_price)}</p>
+        <p><strong>Year:</strong> ${vehicle.inv_year}</p>
+        <p><strong>Mileage:</strong> ${new Intl.NumberFormat("en-US").format(
+          vehicle.inv_miles
+        )} miles</p>
+        <p><strong>Color:</strong> ${vehicle.inv_color}</p>
+        <p><strong>Description:</strong> ${vehicle.inv_description}</p>
+    </div>
+  `;
+};
 
 /* ****************************************
  * Middleware For Handling Errors
