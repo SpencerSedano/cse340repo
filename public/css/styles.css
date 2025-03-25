@@ -90,6 +90,30 @@ footer {
   position: relative;
 }
 
+/* Login.ejs */
+.login-form {
+  max-width: 500px;
+  padding: 2rem;
+  border-style: solid;
+}
+
+.login-form div {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-input {
+  padding: 0.5rem;
+}
+
+.login-password {
+  padding: 0.5rem;
+}
+
+.form-input {
+  padding: 0.5rem;
+}
+
 @media only screen and (max-width: 600px) {
   .divide-sections {
     flex-direction: column;
