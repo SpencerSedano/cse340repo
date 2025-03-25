@@ -1,14 +1,22 @@
 <h1>Register</h1>
-<form class="login-form">
+<form class="login-form" action="/account/register" method="post">
   <div>
     <label> First name:</label>
-    <input class="form-input" type="text" required />
+    <input class="form-input" type="text" name="account_firstname" required />
+
     <label>Last name:</label>
-    <input class="form-input" type="text" required />
+    <input class="form-input" type="text" name="account_lastname" required />
+
     <label>Email Address:</label>
-    <input class="form-input" type="text" required />
+    <input class="form-input" type="text" name="account_email" required />
+
     <label>Password</label>
-    <input class="form-input" type="password" required />
+    <input
+      class="form-input"
+      type="password"
+      name="account_password"
+      required
+    />
     <p>
       Passwords must be minimum of 12 characters and include 1 capital letter, 1
       number and 1 special character.
