@@ -1,0 +1,33 @@
+#page-title {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#main-nav {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.nav-item {
+  font-size: 1rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}

@@ -1,3 +1,7 @@
-<% if (title) { %>
-<h1><%= title %></h1>
-<% } else { res.redirect('/') } %> <%# messages() %>
+<div class="error-page">
+  <% if (title) { %>
+  <h1><%= title %></h1>
+  <% } else { res.redirect('/') } %>
+  <p>Something went wrong. Please try again later.</p>
+  <a href="/">Go Back to Home</a>
+</div>

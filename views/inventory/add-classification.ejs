@@ -1,0 +1,34 @@
+<h1>Add New Classification</h1>
+<%- messages() %>
+<form
+  action="/inv/add-classification"
+  method="POST"
+  onsubmit="return validateForm(event)"
+>
+  <label for="classification_name">Classification Name:</label>
+  <input
+    type="text"
+    id="classification_name"
+    name="classification_name"
+    required
+  />
+  <small
+    >Classification name must not contain spaces or special characters.</small
+  >
+  <p id="error-message" style="color: red"></p>
+  <button type="submit">Add Classification</button>
+</form>
+<script>
+  function validateForm(event) {
+    const input = document.getElementById("classification_name");
+    const errorMessage = document.getElementById("error-message");
+    const regex = /^[a-zA-Z0-9]+$/;
+    if (!regex.test(input.value)) {
+      errorMessage.innerText = "Invalid classification name.";
+      event.preventDefault();
+      return false;
+    }
+    errorMessage.innerText = "";
+    return true;
+  }
+</script>

@@ -5,24 +5,34 @@ const Util = {};
  * Constructs the nav HTML unordered list
  ************************** */
 
-Util.getNav = async function (req, res, next) {
-  let data = await invModel.getClassifications();
-  let list = "<ul class='nav-ul'>";
-  list += '<li id="tools"><a href="/" title="Home page">Home</a></li>';
-  data.rows.forEach((row) => {
-    list += "<li>";
-    list +=
-      '<a href="/inv/type/' +
-      row.classification_id +
-      '" title="See our inventory of ' +
-      row.classification_name +
-      ' vehicles">' +
-      row.classification_name +
-      "</a>";
-    list += "</li>";
-  });
-  list += "</ul>";
-  return list;
+Util.getNav = async function () {
+  try {
+    let data = await invModel.getAllClassifications();
+    if (!data || data.rows.length === 0) {
+      console.error("No classifications found.");
+      return "<ul class='nav-ul'><li>No classifications available</li></ul>";
+    }
+
+    let list = "<ul class='nav-ul'>";
+    list += '<li id="tools"><a href="/" title="Home page">Home</a></li>';
+    data.rows.forEach((row) => {
+      list += "<li>";
+      list +=
+        '<a href="/inv/type/' +
+        row.classification_id +
+        '" title="See our inventory of ' +
+        row.classification_name +
+        ' vehicles">' +
+        row.classification_name +
+        "</a>";
+      list += "</li>";
+    });
+    list += "</ul>";
+    return list;
+  } catch (error) {
+    console.error("Error building navigation:", error.message);
+    return "<ul class='nav-ul'><li>Error loading navigation</li></ul>";
+  }
 };
 
 /* **************************************
@@ -103,6 +113,27 @@ Util.buildVehicleDetailView = function (vehicle) {
         <p><strong>Description:</strong> ${vehicle.inv_description}</p>
     </div>
   `;
+};
+
+Util.buildClassificationList = async function (selectedId = null) {
+  try {
+    console.log("Fetching classifications from the database...");
+    const classifications = await invModel.getAllClassifications();
+    console.log("Classifications fetched:", classifications.rows);
+
+    if (!classifications || classifications.rows.length === 0) {
+      console.error("No classifications found.");
+      return [];
+    }
+
+    return classifications.rows.map((c) => ({
+      id: c.classification_id,
+      name: c.classification_name,
+    }));
+  } catch (error) {
+    console.error("Error in buildClassificationList:", error.message);
+    return [];
+  }
 };
 
 /* ****************************************

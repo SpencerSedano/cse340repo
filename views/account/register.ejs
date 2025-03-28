@@ -1,21 +1,54 @@
 <h1>Register</h1>
-<form class="login-form" action="/account/register" method="post">
+
+<%- messages() %> <% if (errors) { %>
+<ul class="notice">
+  <% errors.array().forEach(error => { %>
+  <li><%= error.msg %></li>
+  <% }) %>
+</ul>
+<% } %>
+
+<form
+  class="login-form"
+  id="registerForm"
+  action="/account/register"
+  method="post"
+>
   <div>
-    <label> First name:</label>
-    <input class="form-input" type="text" name="account_firstname" required />
+    <label for="firstname"> First name:</label>
+    <input
+      type="text"
+      name="account_firstname"
+      id="accountFirstname"
+      required
+      value="<%= locals.account_firstname %>"
+    />
 
-    <label>Last name:</label>
-    <input class="form-input" type="text" name="account_lastname" required />
+    <label for="lastname">Last name:</label>
+    <input
+      class="form-input"
+      type="text"
+      name="account_lastname"
+      required
+      value="<%= locals.account_lastname %>"
+    />
 
-    <label>Email Address:</label>
-    <input class="form-input" type="text" name="account_email" required />
+    <label for="email">Email Address:</label>
+    <input
+      class="form-input"
+      type="text"
+      name="account_email"
+      required
+      value="<%= locals.account_email %>"
+    />
 
-    <label>Password</label>
+    <label for="password">Password</label>
     <input
       class="form-input"
       type="password"
       name="account_password"
       required
+      pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
     />
     <p>
       Passwords must be minimum of 12 characters and include 1 capital letter, 1

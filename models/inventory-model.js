@@ -3,10 +3,29 @@ const pool = require("../database/");
 /* ***************************
  *  Get all classification data
  * ************************** */
-async function getClassifications() {
-  return await pool.query(
-    "SELECT * FROM public.classification ORDER BY classification_name"
-  );
+async function getAllClassifications() {
+  try {
+    console.log("Executing query to fetch classifications...");
+    const result = await pool.query(
+      "SELECT classification_id, classification_name FROM public.classification ORDER BY classification_name"
+    );
+    console.log("Query result:", result.rows);
+    return result;
+  } catch (error) {
+    console.error("Error in getAllClassifications:", error.message);
+    throw error;
+  }
+}
+
+async function insertClassification(classification_name) {
+  try {
+    const sql = `INSERT INTO public.classification (classification_name) VALUES ($1) RETURNING *`;
+    const result = await pool.query(sql, [classification_name]);
+    return result.rows[0]; // Return the inserted row
+  } catch (error) {
+    console.error("Error inserting classification:", error);
+    throw error;
+  }
 }
 
 /* ***************************
@@ -24,6 +43,7 @@ async function getInventoryByClassificationId(classification_id) {
     return data.rows;
   } catch (error) {
     console.error("getclassificationsbyid error " + error);
+    throw error;
   }
 }
 
@@ -38,8 +58,36 @@ async function getInventoryById(inv_id) {
   }
 }
 
+async function insertInventory(vehicle) {
+  try {
+    const sql = `
+      INSERT INTO public.inventory (classification_id, inv_make, inv_model, inv_year, inv_price, inv_description, inv_image, inv_thumbnail, inv_miles, inv_color)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
+
+    const result = await pool.query(sql, [
+      vehicle.classification_id,
+      vehicle.inv_make,
+      vehicle.inv_model,
+      vehicle.inv_year,
+      vehicle.inv_price,
+      vehicle.inv_description,
+      vehicle.inv_image,
+      vehicle.inv_thumbnail,
+      vehicle.inv_miles,
+      vehicle.inv_color,
+    ]);
+
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error inserting inventory:", error);
+    throw error;
+  }
+}
+
 module.exports = {
-  getClassifications,
+  getAllClassifications,
   getInventoryByClassificationId,
   getInventoryById,
+  insertClassification,
+  insertInventory,
 };

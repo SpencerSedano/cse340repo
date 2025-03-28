@@ -44,6 +44,11 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use((err, req, res, next) => {
+  console.error("Unexpected Error:", err);
+  res.status(500).send("Something went wrong.");
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
