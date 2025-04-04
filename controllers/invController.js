@@ -26,10 +26,12 @@ invCont.buildByClassificationId = async function (req, res, next) {
 invCont.renderManagementView = async function (req, res) {
   try {
     let nav = await utilities.getNav();
+    const classificationList = await utilities.buildClassificationList();
     res.render("inventory/management", {
       title: "Inventory Management",
       nav,
       messages: req.flash("info"),
+      classificationList, // Pass the HTML string to the view
     });
   } catch (error) {
     console.error("Error rendering management view:", error.message);
@@ -217,6 +219,120 @@ invCont.buildInventoryDetail = async function (req, res, next) {
     nav,
     vehicle,
   });
+};
+
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+invCont.getInventoryJSON = async (req, res, next) => {
+  const classification_id = parseInt(req.params.classification_id);
+  console.log("Classification ID:", classification_id);
+  const invData = await invModel.getInventoryByClassificationId(
+    classification_id
+  );
+  if (invData[0].inv_id) {
+    return res.json(invData);
+  } else {
+    next(new Error("No data returned"));
+  }
+};
+
+/* ***************************
+ *  Build edit inventory view
+ * ************************** */
+invCont.editInventoryView = async function (req, res, next) {
+  const inv_id = parseInt(req.params.inv_id);
+  console.log("Parsed inv_id:", inv_id);
+  let nav = await utilities.getNav();
+  const itemData = await invModel.getInventoryById(inv_id);
+  const classificationList = await utilities.buildClassificationList(
+    itemData.classification_id
+  );
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`;
+  res.render("./inventory/edit-inventory", {
+    title: "Edit " + itemName,
+    nav,
+    classificationList,
+    errors: null,
+    inv_id: itemData.inv_id,
+    inv_make: itemData.inv_make,
+    inv_model: itemData.inv_model,
+    inv_year: itemData.inv_year,
+    inv_description: itemData.inv_description,
+    inv_image: itemData.inv_image,
+    inv_thumbnail: itemData.inv_thumbnail,
+    inv_price: itemData.inv_price,
+    inv_miles: itemData.inv_miles,
+    inv_color: itemData.inv_color,
+    classification_id: itemData.classification_id,
+  });
+};
+
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+invCont.updateInventory = async function (req, res, next) {
+  let nav = await utilities.getNav();
+  const {
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_year,
+    inv_miles,
+    inv_color,
+    classification_id,
+  } = req.body;
+
+  console.log("Form data received:", req.body); // Debugging log
+
+  try {
+    // Parse numeric fields to ensure they are valid
+    const updatedVehicle = {
+      inv_id: parseInt(inv_id),
+      classification_id: parseInt(classification_id),
+      inv_make,
+      inv_model,
+      inv_year: parseInt(inv_year),
+      inv_price: parseFloat(inv_price),
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_miles: parseInt(inv_miles),
+      inv_color,
+    };
+
+    console.log("Parsed data for update:", updatedVehicle); // Debugging log
+
+    const result = await invModel.updateInventory(
+      updatedVehicle.inv_id,
+      updatedVehicle.inv_make,
+      updatedVehicle.inv_model,
+      updatedVehicle.inv_year,
+      updatedVehicle.inv_price,
+      updatedVehicle.inv_description,
+      updatedVehicle.inv_image,
+      updatedVehicle.inv_thumbnail,
+      updatedVehicle.inv_miles,
+      updatedVehicle.inv_color,
+      updatedVehicle.classification_id
+    );
+
+    if (result) {
+      req.flash("info", "Inventory item updated successfully.");
+      res.redirect("/inv");
+    } else {
+      req.flash("error", "Failed to update inventory item.");
+      res.redirect(`/inv/edit/${inv_id}`);
+    }
+  } catch (error) {
+    console.error("Error updating inventory item:", error.message);
+    req.flash("error", "Error updating inventory item.");
+    res.redirect(`/inv/edit/${inv_id}`);
+  }
 };
 
 module.exports = invCont;

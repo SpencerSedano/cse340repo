@@ -2,10 +2,15 @@
 <form class="login-form" id="loginForm" action="/account/login" method="post">
   <div>
     <label>Email Address:</label>
-    <input class="login-input" type="email" />
+    <input class="login-input" type="email" name="account_email" required />
 
     <label>Password</label>
-    <input class="login-password" type="password" />
+    <input
+      class="login-password"
+      type="password"
+      name="account_password"
+      required
+    />
     <p>
       Passwords must be minimum of 12 characters and include 1 capital letter, 1
       number and 1 special character.

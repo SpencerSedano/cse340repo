@@ -5,6 +5,7 @@ const router = new express.Router();
 const invController = require("../controllers/invController");
 
 const { body } = require("express-validator");
+const { newInventoryRules } = require("../utilities/inventory-validation");
 
 // Route to build inventory by classification view
 router.get("/type/:classificationId", invController.buildByClassificationId);
@@ -24,6 +25,16 @@ router.get(
 router.get(
   "/add-inventory",
   utilities.handleErrors(invController.renderAddInventory)
+);
+
+router.get(
+  "/getInventory/:classification_id",
+  utilities.handleErrors(invController.getInventoryJSON)
+);
+
+router.get(
+  "/edit/:inv_id",
+  utilities.handleErrors(invController.editInventoryView)
 );
 
 router.post(
@@ -59,6 +70,13 @@ router.post(
     body("inv_color").notEmpty().withMessage("Color is required."),
   ],
   utilities.handleErrors(invController.addNewInventory)
+);
+
+router.post(
+  "/update/",
+  newInventoryRules(),
+  // utilities.handleErrors(invController.checkUpdateData),
+  utilities.handleErrors(invController.updateInventory)
 );
 
 module.exports = router;
