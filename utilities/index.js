@@ -176,6 +176,18 @@ Util.checkJWTToken = (req, res, next) => {
 };
 
 /* ****************************************
+ * Middleware to check account type
+ **************************************** */
+Util.checkAccountType = (req, res, next) => {
+  const { account_type } = res.locals.accountData || {};
+  if (account_type === "Employee" || account_type === "Admin") {
+    return next();
+  }
+  req.flash("notice", "You do not have permission to access this page.");
+  return res.redirect("/account/login");
+};
+
+/* ****************************************
  *  Check Login
  * ************************************ */
 Util.checkLogin = (req, res, next) => {

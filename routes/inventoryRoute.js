@@ -6,6 +6,7 @@ const invController = require("../controllers/invController");
 
 const { body } = require("express-validator");
 const { newInventoryRules } = require("../utilities/inventory-validation");
+const { checkAccountType } = require("../utilities");
 
 // Route to build inventory by classification view
 router.get("/type/:classificationId", invController.buildByClassificationId);
@@ -19,11 +20,13 @@ router.get("/", utilities.handleErrors(invController.renderManagementView));
 
 router.get(
   "/add-classification",
+  checkAccountType,
   utilities.handleErrors(invController.renderAddClassification)
 );
 
 router.get(
   "/add-inventory",
+  checkAccountType,
   utilities.handleErrors(invController.renderAddInventory)
 );
 
@@ -34,13 +37,19 @@ router.get(
 
 router.get(
   "/edit/:inv_id",
+  checkAccountType,
   utilities.handleErrors(invController.editInventoryView)
 );
 
-router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteView));
+router.get(
+  "/delete/:inv_id",
+  checkAccountType,
+  utilities.handleErrors(invController.deleteView)
+);
 
 router.post(
   "/add-classification",
+  checkAccountType,
   body("classification_name")
     .trim()
     .escape()
@@ -55,6 +64,7 @@ router.post(
 
 router.post(
   "/add-inventory",
+  checkAccountType,
   [
     body("classification_id")
       .notEmpty()
@@ -76,6 +86,7 @@ router.post(
 
 router.post(
   "/update/",
+  checkAccountType,
   newInventoryRules(),
   // utilities.handleErrors(invController.checkUpdateData),
   utilities.handleErrors(invController.updateInventory)
