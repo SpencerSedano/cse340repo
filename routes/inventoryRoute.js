@@ -37,6 +37,8 @@ router.get(
   utilities.handleErrors(invController.editInventoryView)
 );
 
+router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteView));
+
 router.post(
   "/add-classification",
   body("classification_name")
