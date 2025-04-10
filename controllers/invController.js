@@ -31,7 +31,7 @@ invCont.renderManagementView = async function (req, res) {
       title: "Inventory Management",
       nav,
       messages: req.flash("info"),
-      classificationList, // Pass the HTML string to the view
+      classificationList,
     });
   } catch (error) {
     console.error("Error rendering management view:", error.message);
@@ -287,10 +287,9 @@ invCont.updateInventory = async function (req, res, next) {
     classification_id,
   } = req.body;
 
-  console.log("Form data received:", req.body); // Debugging log
+  console.log("Form data received:", req.body);
 
   try {
-    // Parse numeric fields to ensure they are valid
     const updatedVehicle = {
       inv_id: parseInt(inv_id),
       classification_id: parseInt(classification_id),

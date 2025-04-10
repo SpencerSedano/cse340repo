@@ -17,6 +17,8 @@ const session = require("express-session");
 const pool = require("./database/");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const favoritesRoutes = require("./routes/favoritesRoutes");
+require("dotenv").config();
 
 /* ***********************
  * View Engine and Templates
@@ -32,9 +34,10 @@ app.use(
       pool,
     }),
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     name: "sessionId",
+    cookie: { secure: false },
   })
 );
 
@@ -42,6 +45,8 @@ app.use(
 app.use(require("connect-flash")());
 app.use(function (req, res, next) {
   res.locals.messages = require("express-messages")(req, res);
+  res.locals.favorites = req.session.favorites || [];
+
   next();
 });
 
@@ -67,6 +72,7 @@ app.use(express.static("public"));
 app.get("/", utilities.handleErrors(baseController.buildHome));
 app.use("/inv", inventoryRoute);
 app.use("/account", require("./routes/accountRoute"));
+app.use("/favorites", favoritesRoutes);
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {

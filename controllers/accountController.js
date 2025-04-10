@@ -2,6 +2,7 @@ const utilities = require("../utilities");
 const accountModel = require("../models/account-model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const favoritesModel = require("../models/favoritesModel");
 require("dotenv").config();
 
 async function buildAccountHome(req, res) {
@@ -44,10 +45,8 @@ async function registerAccount(req, res) {
     account_password,
   } = req.body;
 
-  // Hash the password before storing
   let hashedPassword;
   try {
-    // regular password and cost (salt is generated automatically)
     hashedPassword = await bcrypt.hashSync(account_password, 10);
   } catch (error) {
     req.flash(
@@ -61,13 +60,12 @@ async function registerAccount(req, res) {
     });
   }
 
-  // Call the model to register the account
   try {
     const regResult = await accountModel.registerAccount(
       account_firstname,
       account_lastname,
       account_email,
-      hashedPassword // Pass the hashed password
+      hashedPassword
     );
 
     if (regResult.rowCount) {
@@ -138,6 +136,15 @@ async function accountLogin(req, res) {
           maxAge: 3600 * 1000,
         });
       }
+      req.session.account_id = accountData.account_id;
+
+      const userFavorites = await favoritesModel.getFavoritesByAccountId(
+        accountData.account_id
+      );
+      req.session.favorites = userFavorites.map((fav) => fav.inv_id);
+
+      console.log("Session set with Account ID:", req.session.account_id); //
+      console.log("User favorites:", req.session.favorites);
       return res.redirect("/account/");
     } else {
       req.flash(

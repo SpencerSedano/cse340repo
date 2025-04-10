@@ -191,7 +191,8 @@ Util.checkAccountType = (req, res, next) => {
  *  Check Login
  * ************************************ */
 Util.checkLogin = (req, res, next) => {
-  if (res.locals.loggedin) {
+  console.log("Session Account ID:", req.session.account_id);
+  if (req.session.account_id) {
     next();
   } else {
     req.flash("notice", "Please log in.");

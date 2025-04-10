@@ -8,3 +8,39 @@
   Mileage: <%= new Intl.NumberFormat("en-US").format(vehicle.inv_miles) %> miles
 </p>
 <p>Color: <%= vehicle.inv_color %></p>
+
+<!-- Favorite Button -->
+<% console.log(`Locals favorites: ${locals.favorites}`); %> <% const isFavorited
+= locals.favorites && locals.favorites.includes(vehicle.inv_id); %>
+<button id="favorite-btn" data-inv-id="<%= vehicle.inv_id %>">
+  <span id="favorite-icon"><%= isFavorited ? "❤️" : "♡" %></span> Favorite
+</button>
+
+<script>
+  document
+    .getElementById("favorite-btn")
+    .addEventListener("click", async function () {
+      const invId = this.getAttribute("data-inv-id");
+      try {
+        const response = await fetch("/favorites/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ inv_id: invId }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          const icon = document.getElementById("favorite-icon");
+          icon.textContent = result.favorited ? "❤️" : "♡";
+          alert(
+            result.favorited ? "Added to favorites!" : "Removed from favorites!"
+          );
+        } else {
+          alert(result.message || "Failed to toggle favorite.");
+        }
+      } catch (error) {
+        console.error("Error toggling favorite:", error);
+        alert("An error occurred.");
+      }
+    });
+</script>
